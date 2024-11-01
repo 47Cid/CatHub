@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Cats{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <img src="/static/gato.webp" alt="Cute Cat" class="img-fluid">
+</div>
+    <h1>{{ title }}</h1>
+
+    <!-- Display All Comments -->
+    <h2>Comments</h2>
+    {% if comments %}
+        <ul class="list-group">
+            {% for comment in comments %}
+                <li class="list-group-item">
+                    <p><strong>{{ comment.author.username }}:</strong> {{ comment.content | safe }}</p>
+                    <small>{{ comment.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No comments yet.</p>
+    {% endif %}
+
+    <!-- Comment Form -->
+
+    {% if current_user.is_admin %}
+    <li class="nav-item">
+        <div id="api_key">  Your Secret API Key: {{api_key}} </div>
+        <input name="recovery" value="ddaf35a193617ab4">
+    </li>
+{% endif %}
+
+
+    <form action="{{ url_for('comments') }}" method="post">
+        {{ form.hidden_tag() }} <!-- CSRF token included here -->
+        <div class="form-group">
+            {{ form.content.label(class="form-label") }}<br>
+            {{ form.content(class="form-control", rows=5) }}<br>
+            {% for error in form.content.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+
+    <a class="btn btn-secondary mt-3" href="{{ url_for('home') }}">Back to Home</a>
+{% endblock %}
